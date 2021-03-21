@@ -1,0 +1,6 @@
+.DS_Store
+apidocs
+docs
+apidoc.json
+go.mod
+go.sum
