@@ -9,8 +9,12 @@ import (
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	// Get user value
-	r.GET("/accounts/:name", controller.ShowAccount)
 	r.POST("/accounts", controller.AddAccount)
+	r.DELETE("/accounts/:user_id", controller.DeleteAccountByUserID)
+	r.PATCH("/accounts/:user_id", controller.UpdateAccountByUserID)
+	r.GET("/accounts", controller.GetAccount)
+	r.GET("/accounts/name/:name", controller.GetAccountByName)
+	r.GET("/accounts/id/:user_id", controller.GetAccountByID)
 
 	// Authorized group (uses gin.BasicAuth() middleware)
 	// Same than:

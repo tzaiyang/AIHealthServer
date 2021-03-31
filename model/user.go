@@ -1,39 +1,17 @@
 package model
 
-import (
-	"fmt"
-	"io/ioutil"
-	"net/http"
-)
-
-type Page struct {
-	Title string
-	Body  []byte
-}
+import "gopkg.in/mgo.v2"
 
 type User struct {
-	Name   string `bson: "name"`
-	Birth  string `bson: "birth"`
-	Gender string `bson: "gender"`
-	ABO    string `bson: "abo"`
+	User_ID string `json:"user_id" example:"18717992222" format:"string"`
+	Phone   string `json:"phone" example:"18717992222"`
+	Name    string `json:"name" example:"Ryan"`
+	Birth   string `json:"birth" example:"2009-08-23"`
+	Gender  string `json:"gender" example:"男"`
+	ABO     string `json:"abo" example:"B"`
+	Rh      bool   `json:"rh" example:"true"`
+	Height  int    `json:"height" example:"170"`
+	Weight  int    `json:"weight" example:"65"`
 }
 
-func (p *Page) Save() error {
-	filename := p.Title + ".json"
-	return ioutil.WriteFile(filename, p.Body, 0600)
-}
-
-func loadPage(title string) (*Page, error) {
-	filename := title + ".json"
-	body, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-	return &Page{Title: title, Body: body}, nil
-}
-
-func viewHandler(w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Path[len("/baseinfo/"):]
-	p, _ := loadPage(title)
-	fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", p.Title, p.Body)
-}
+var MongoClient *mgo.Session
