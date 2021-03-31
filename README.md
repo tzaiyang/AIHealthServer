@@ -14,6 +14,13 @@ go get -u github.com/swaggo/files
 swag init
 go run main.go
 
+deployment
+```bash
+GOOS=linux GOARCH=amd64 go build -o aihealth main.go
+docker build -t aihealth:0.1 ./
+docker run -d -p 8080:8080 aihealth:0.1
+```
+
 # localhost:8080/api/index.html
 ```
 
