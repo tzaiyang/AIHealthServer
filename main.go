@@ -20,9 +20,9 @@ func main() {
 	// p1 := &(model.Page{Title: "RyanTang", Body: []byte("First Name: Ryan\nLast Name: Tang\nBirth Day: 1995-06-26\n")})
 	// p1.Save()
 	var err error
-	model.MongoClient, err = mgo.Dial("127.0.0.1")
+	model.MongoSession, err = mgo.Dial("127.0.0.1")
 
-	defer model.MongoClient.Close()
+	defer model.MongoSession.Close()
 	if err != nil {
 		fmt.Print("connect error")
 	}

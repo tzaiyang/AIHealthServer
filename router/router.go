@@ -15,7 +15,6 @@ func SetupRouter() *gin.Engine {
 	r.GET("/accounts", controller.GetAccount)
 	r.GET("/accounts/name/:name", controller.GetAccountByName)
 	r.GET("/accounts/id/:user_id", controller.GetAccountByID)
-
 	// Authorized group (uses gin.BasicAuth() middleware)
 	// Same than:
 	// authorized := r.Group("/")
@@ -37,5 +36,11 @@ func SetupRouter() *gin.Engine {
 	  	-H 'content-type: application/json' \
 	  	-d '{"value":"bar"}'
 	*/
+
+	r.POST("/medicals", controller.AddMedical)
+	r.GET("/medicals", controller.GetMedicals)
+
+	r.POST("/mtrs", controller.AddMTR)
+	r.GET("/mtrs", controller.GetMTR)
 	return r
 }

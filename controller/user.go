@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"AIHealth_Server/dbs"
 	"AIHealth_Server/model"
 	"log"
 	"net/http"
@@ -36,11 +35,11 @@ func AuthorizeAccount(c *gin.Context) {
 // @Header 200 {string} user "User name"
 // @Router /accounts/name/{name} [get]
 func GetAccountByName(c *gin.Context) {
-	collection := model.MongoClient.DB("AIHealth").C("users")
-
 	user_name := c.Params.ByName("name")
 	log.Println(user_name)
+
 	var data []interface{}
+	collection := model.MongoSession.DB("AIHealth").C("users")
 	if err := collection.Find(bson.M{"name": user_name}).All(&data); err == nil {
 		c.JSON(http.StatusOK, data)
 	} else {
@@ -56,11 +55,11 @@ func GetAccountByName(c *gin.Context) {
 // @Header 200 {string} user "User name"
 // @Router /accounts/id/{user_id} [get]
 func GetAccountByID(c *gin.Context) {
-	collection := model.MongoClient.DB("AIHealth").C("users")
-
 	user_name := c.Params.ByName("user_id")
 	log.Println(user_name)
+
 	var data []interface{}
+	collection := model.MongoSession.DB("AIHealth").C("users")
 	if err := collection.Find(bson.M{"user_id": user_name}).All(&data); err == nil {
 		c.JSON(http.StatusOK, data)
 	} else {
@@ -75,9 +74,9 @@ func GetAccountByID(c *gin.Context) {
 // @Header 200 {string} user "User name"
 // @Router /accounts [get]
 func GetAccount(c *gin.Context) {
-	collection := model.MongoClient.DB("AIHealth").C("users")
 
 	var data []interface{}
+	collection := model.MongoSession.DB("AIHealth").C("users")
 	if err := collection.Find(bson.M{}).All(&data); err == nil {
 		c.JSON(http.StatusOK, data)
 	} else {
@@ -93,59 +92,18 @@ func GetAccount(c *gin.Context) {
 // @Router /accounts [post]
 func AddAccount(c *gin.Context) {
 	// path c.Param
-	// @Produce formData c.PostForm
-	//
+	// @Accept formData c.PostForm
 	log.Println(c)
-
 	var data model.User
-
 	if err := c.ShouldBindJSON(&data); err != nil {
 		httputil.NewError(c, http.StatusBadRequest, err)
 		return
 	}
-
-	// curl -X POST "http://localhost:8080/accounts" -H "accept: application/json" -H "Content-Type: application/json" -d '{"user_id":"13","name":"1","gender":"2"}'
-	// curl -X POST "http://localhost:8080/accounts" -d 'name=1&gender=2&user_id=14'
-	// data := model.User{
-	// 	User_ID: c.PostForm("user_id"),
-	// 	Name:    c.PostForm("name"),
-	// 	Birth:   c.PostForm("birth"),
-	// 	Gender:  c.PostForm("gender"),
-	// 	ABO:     c.PostForm("abo"),
-	// 	Phone:   c.PostForm("phone"),
-	// 	// Rh:     bool(c.PostForm("rh")),
-	// 	// Height: c.PostForm("height"),
-	// 	// Weight: c.PostForm("weight"),
-	// }
-	// data := model.User{
-	// 	Name:   c.Param("name"),
-	// 	Birth:  c.Param("birth"),
-	// 	Gender: c.Param("gender"),
-	// 	ABO:    c.Param("abo"),
-	// 	Phone:  c.Param("phone"),
-	// 	// Rh:     bool(c.PostForm("rh")),
-	// 	// Height: c.PostForm("height"),
-	// 	// Weight: c.PostForm("weight"),
-	// }
-
-	err := dbs.InsertMongo(model.MongoClient, "AIHealth", "users", data)
+	err := data.Insert()
 	if err != nil {
-		log.Println(err)
 		c.JSON(400, gin.H{"error": err})
-		return
 	}
-
-	c.JSON(200, gin.H{
-		"user_id": data.User_ID,
-		"gender":  data.Gender,
-		"birth":   data.Birth,
-		"abo":     data.ABO,
-		"name":    data.Name,
-		"phone":   data.Phone,
-		"rh":      data.Rh,
-		"height":  data.Height,
-		"weight":  data.Weight,
-	})
+	c.JSON(200, data)
 }
 
 // @Description Delete user by user_id
@@ -155,10 +113,12 @@ func AddAccount(c *gin.Context) {
 // @Success 200
 // @Router /accounts/{user_id} [delete]
 func DeleteAccountByUserID(c *gin.Context) {
-	collection := model.MongoClient.DB("AIHealth").C("users")
 	user_id := c.Params.ByName("user_id")
 	log.Println(user_id)
-	if err := collection.Remove(bson.M{"user_id": user_id}); err == nil {
+
+	err := model.UserDeleteByID(user_id)
+
+	if err == nil {
 		c.JSON(200, gin.H{"status": "deleted succes"})
 	} else {
 		// log.Fatal(err)
@@ -175,18 +135,15 @@ func DeleteAccountByUserID(c *gin.Context) {
 // @Router /accounts/{user_id} [patch]
 func UpdateAccountByUserID(c *gin.Context) {
 	user_id := c.Param("user_id")
-
 	var updateAccount model.User
 	if err := c.ShouldBindJSON(&updateAccount); err != nil {
 		httputil.NewError(c, http.StatusBadRequest, err)
 		return
 	}
-	collection := model.MongoClient.DB("AIHealth").C("users")
-	err := collection.Update(bson.M{"user_id": user_id}, updateAccount)
+	err := updateAccount.UpdateByID(user_id)
 	if err != nil {
 		// log.Fatal(err)
 		c.JSON(400, gin.H{"err": err.Error()})
 	}
-
 	c.JSON(http.StatusOK, updateAccount)
 }
