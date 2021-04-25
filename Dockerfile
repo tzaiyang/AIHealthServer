@@ -6,4 +6,4 @@ WORKDIR /app
 COPY ./aihealth ./aihealth
 EXPOSE 8080
 
-CMD ["/app/aihealth"]
+CMD ["./aihealth"]

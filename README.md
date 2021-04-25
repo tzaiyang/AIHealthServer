@@ -12,7 +12,7 @@ go run main.go
 ```bash
 swag init
 GOOS=linux GOARCH=amd64 go build -o aihealth main.go
-docker build -t aihealth:0.1 ./
+docker build -t registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1 ./
 docker run -d -p 8080:8080 aihealth:0.1
 ```
 
@@ -69,6 +69,7 @@ https://github.com/swaggo/swag#declarative-comments-format
 https://gin-gonic.com/docs/examples/bind-query-or-post/
 
 
-- docker login registry.cn-hangzhou.aliyuncs.com
-  - docker pull registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1
-  - docker run -d -p 8080:8080 registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1
+```bash
+docker pull registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1
+docker run --name aihealth -p 10086:8080 registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1
+```
