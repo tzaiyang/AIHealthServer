@@ -32,8 +32,11 @@ script:
   # - go test -v ./controller
   # - GOOS=linux GOARCH=amd64 go build -o aihealth main.go
   - go build -o aihealth main.go
-  - docker build -t registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1 ./
+  # - docker build -t registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1 ./
+  - docker build -t tzaiyang/aihealth:0.1 ./
 
 after_success:
-  - echo ${DOCKER_PASSWORD} |docker login -u ${DOCKER_USER} --password-stdin registry.cn-hangzhou.aliyuncs.com 
-  - docker push registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1
+  # - echo ${DOCKER_PASSWORD} |docker login -u ${DOCKER_USER} --password-stdin registry.cn-hangzhou.aliyuncs.com 
+  # - docker push registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1
+  - echo ${DOCKERHUB_PASSWORD} |docker login -u ${DOCKERHUB_USER} --password-stdin
+  - docker push tzaiyang/aihealth:0.1
