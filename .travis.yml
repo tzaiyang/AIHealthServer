@@ -1,0 +1,36 @@
+# os: osx
+# osx_image: xcode12.2
+
+dist: xenial
+addons:
+  apt:
+    sources:
+      - docker-xenial
+      - ppa:git-core/ppa
+
+language: go
+go:
+- 1.14.x
+- 1.16.x
+
+env:
+  - GO111MODULE=on
+# go_import_path: example.org/pkg/foo
+
+before_install:
+  - go get -u gopkg.in/mgo.v2
+  - go get -u github.com/gin-gonic/gin
+  - go get -u github.com/swaggo/swag/cmd/swag
+  - go get -u github.com/swaggo/gin-swagger
+  - go get -u github.com/swaggo/files
+
+# gobuild_args: -x -ldflags "-X main.VersionString v1.2.3"
+script: 
+  - go test -v ./controller
+  - swag init
+  - GOOS=linux GOARCH=amd64 go build -o aihealth main.go
+  - docker build -t registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1 ./
+
+after_success:
+  - docker login registry.cn-hangzhou.aliyuncs.com
+  - docker push registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1

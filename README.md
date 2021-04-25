@@ -67,3 +67,8 @@ elastics
 https://docs.mongodb.com/drivers/go/
 https://github.com/swaggo/swag#declarative-comments-format
 https://gin-gonic.com/docs/examples/bind-query-or-post/
+
+
+- docker login registry.cn-hangzhou.aliyuncs.com
+  - docker pull registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1
+  - docker run -d -p 8080:8080 registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1
