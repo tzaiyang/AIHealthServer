@@ -1,7 +1,7 @@
 package router
 
 import (
-	"AIHealth_Server/controller"
+	"AIHealthServer/controller"
 
 	"github.com/gin-gonic/gin"
 )

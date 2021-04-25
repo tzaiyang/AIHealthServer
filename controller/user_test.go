@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"AIHealth_Server/model"
 	"testing"
+
+	"AIHealthServer/model"
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
