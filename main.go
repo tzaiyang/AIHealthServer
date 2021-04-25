@@ -21,6 +21,8 @@ import (
 // @host localhost:8080
 // @BasePath /
 func main() {
+	log.Println("AIHealth start...")
+	log.Println("Connecting MongoDB")
 	dialInfo := mgo.DialInfo{
 		Addrs: []string{
 			"cluster0-shard-00-00.xkwrz.mongodb.net:27017",
@@ -35,13 +37,16 @@ func main() {
 		return conn, err
 	}
 	var err error
-	model.MongoSession, err = mgo.DialWithInfo(&dialInfo)
+	// model.MongoSession, err = mgo.DialWithInfo(&dialInfo)
+	// model.MongoSession, err = mgo.Dial("127.0.0.1")
+	model.MongoSession, err = mgo.Dial("aiwac.net:27017")
 
 	defer model.MongoSession.Close()
 	if err != nil {
-		log.Println("connect error")
+		log.Println("Connect MongoDB Failed")
+		log.Println(err)
 	} else {
-		log.Println("connect success")
+		log.Println("Connected MongoDB Success")
 	}
 
 	r := router.SetupRouter()
