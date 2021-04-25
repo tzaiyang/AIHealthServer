@@ -18,7 +18,7 @@ import (
 // @title AIHealth API
 // @version 1.0
 // @description This is a AIHealth server.
-// @host localhost:8080
+// @host aiwac.net:10086
 // @BasePath /
 func main() {
 	log.Println("AIHealth start...")

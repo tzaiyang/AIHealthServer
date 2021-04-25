@@ -11,7 +11,7 @@ import (
 
 func TestGetAccount(t *testing.T) {
 	var err error
-	model.MongoSession, err = mgo.Dial("127.0.0.1")
+	model.MongoSession, err = mgo.Dial("aiwac.net:27017")
 	if err != nil {
 		t.Errorf("MongoDB connection is not setting")
 	}
