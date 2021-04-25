@@ -1,4 +1,4 @@
-FROM alpine
+FROM ubuntu:xenial
 
 RUN mkdir /app
 WORKDIR /app
