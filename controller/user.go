@@ -1,10 +1,9 @@
 package controller
 
 import (
+	"aihealth/model"
 	"log"
 	"net/http"
-
-	"AIHealthServer/model"
 
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/swag/example/celler/httputil"

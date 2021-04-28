@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"AIHealthServer/model"
+	"aihealth/model"
 
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/swag/example/celler/httputil"

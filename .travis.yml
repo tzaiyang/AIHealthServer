@@ -17,10 +17,10 @@ env:
 # go_import_path: example.org/pkg/foo
 
 before_install:
-  - go mod init AIHealthServer
+  - go mod tidy
   - go get github.com/swaggo/swag/cmd/swag
   - swag init
-  - go get -u
+  - go get 
   # - go get github.com/gin-gonic/gin
   # - go get github.com/swaggo/gin-swagger
   # - go get github.com/swaggo/files

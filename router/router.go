@@ -1,7 +1,7 @@
 package router
 
 import (
-	"AIHealthServer/controller"
+	"aihealth/controller"
 
 	"github.com/gin-gonic/gin"
 )
@@ -42,5 +42,11 @@ func SetupRouter() *gin.Engine {
 
 	r.POST("/mtrs", controller.AddMTR)
 	r.GET("/mtrs", controller.GetMTR)
+
+	r.POST("/books", controller.AddBooks)
+	r.GET("/books/isbn/:isbn", controller.GetBooksByISBN)
+	r.GET("/books", controller.GetBooks)
+	r.DELETE("/books/:isbn", controller.DeleteBookByISBN)
+	r.PATCH("/books/:isbn", controller.UpdateBookByISBN)
 	return r
 }
