@@ -3,11 +3,13 @@ package router
 import (
 	"aihealth/controller"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
+	r.Use(cors.Default())
 	// Get user value
 	r.POST("/accounts", controller.AddAccount)
 	r.DELETE("/accounts/:user_id", controller.DeleteAccountByUserID)

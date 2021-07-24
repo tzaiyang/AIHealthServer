@@ -1,5 +1,5 @@
 # AIHealth
-![Build Status](https://www.travis-ci.com/tzaiyang/AIHealthServer.svg?branch=master)
+[![Build Status](https://www.travis-ci.com/tzaiyang/AIHealthServer.svg?branch=master)](https://www.travis-ci.com/tzaiyang/AIHealthServer)
 
 AIHealth is an app recording your health data, including base information(height,weight,ABO,etc.), sports data, medical record, etc. The app will analyse these data to help you improve your body health.
 
@@ -41,11 +41,11 @@ https://localhost:8080/api/index.html
 Swagger API annotaion format
 
 ```go
-// @Accept json 表示请求数据格式为json
-// @Produce json 表示响应的数据格式为json
-// @Param  user_id path string true "User Id" 表示user_id将被放入URI中传送给服务器
-// @Param account body model.User true "Add account" 表示account的值将用json字符串格式传送给服务器。
-// @Param  user_id formData string true "User Id" 表示user_id将以-d "user_id=1234&name=Ryan"的形式传给服务器
+// @Accept json (request data format)
+// @Produce json (response data format)
+// @Param  user_id path string true "User Id" (put user_id into URI)
+// @Param account body model.User true "Add account" (`account` value will be sent to server with json string format)
+// @Param  user_id formData string true "User Id" (`user_id` will be sent with `-d "user_id=123&name=Ryan" format to server
 ```
 
 cURL test 

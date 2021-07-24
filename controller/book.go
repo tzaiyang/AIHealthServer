@@ -63,11 +63,11 @@ func AddBooks(c *gin.Context) {
 		httputil.NewError(c, http.StatusBadRequest, err)
 		return
 	}
-	_, err := book.Insert()
+	RowsAffected, err := book.Insert()
 	if err != nil {
 		c.JSON(400, gin.H{"error": err})
 	} else {
-		c.JSON(200, book)
+		c.JSON(200, gin.H{"RowsAffected": RowsAffected, "data": book})
 	}
 }
 
@@ -84,7 +84,7 @@ func DeleteBookByISBN(c *gin.Context) {
 	result := model.MySQLPool.Where("isbn = ?", isbn).Delete(&model.Book{})
 
 	if result.Error == nil {
-		c.JSON(200, gin.H{"status": "deleted succes"})
+		c.JSON(http.StatusOK, gin.H{"RowsAffected": result.RowsAffected})
 	} else {
 		log.Println("error...", result)
 		c.JSON(400, gin.H{"err": result.Error.Error()})
@@ -99,16 +99,32 @@ func DeleteBookByISBN(c *gin.Context) {
 // @Success 200
 // @Router /books/{isbn} [patch]
 func UpdateBookByISBN(c *gin.Context) {
-	// isbn := c.Param("isbn")
+	isbn := c.Param("isbn")
 	var book model.Book
 	if err := c.ShouldBindJSON(&book); err != nil {
 		httputil.NewError(c, http.StatusBadRequest, err)
 		return
 	}
-	result := model.MySQLPool.Save(&book)
+	mutex := model.RediSync.NewMutex("update books")
+
+	// Obtain a lock for our given mutex. After this is successful, no one else
+	// can obtain the same lock (the same mutex name) until we unlock it.
+	if err := mutex.Lock(); err != nil {
+		log.Fatal(err)
+		panic(err)
+	}
+	// Do your work that requires the lock.
+	result := model.MySQLPool.Model(&model.Book{}).Where("isbn = ?", isbn).Updates(book)
+	// Release the lock so other processes or threads can obtain a lock.
+	if ok, err := mutex.Unlock(); !ok || err != nil {
+		log.Fatal(err)
+		panic("unlock failed")
+	}
+
 	if result.Error != nil {
 		// log.Fatal(err)
-		c.JSON(400, gin.H{"err": result.Error.Error()})
+		c.JSON(400, gin.H{"Error Message": result.Error.Error()})
+	} else {
+		c.JSON(http.StatusOK, map[string]interface{}{"RowsAffected": result.RowsAffected, "data": book})
 	}
-	c.JSON(http.StatusOK, book)
 }
