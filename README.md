@@ -9,7 +9,7 @@ AIHealth is an app recording your health data, including base information(height
 1. Docker deployment
     ```bash
     docker pull tzaiyang/aihealth:$tag
-    docker run --rm --name aihealth -d -p 10086:10086 tzaiyang/aihealth:$tag
+    docker run --rm --name aihealth -d -p 10086:10086 -v $config_file_paths:/app/config.yaml tzaiyang/aihealth:$tag
     ```
 
 2. Requirements

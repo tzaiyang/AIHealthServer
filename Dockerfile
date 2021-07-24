@@ -6,4 +6,4 @@ WORKDIR /app
 COPY ./aihealth ./aihealth
 EXPOSE 10086
 
-CMD ["/app/aihealth","-config /app/config.yaml"]
+CMD ["/app/aihealth","-config","/app/config.yaml"]
