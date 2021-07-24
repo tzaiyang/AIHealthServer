@@ -4,16 +4,19 @@ import (
 	"aihealth/model"
 	"aihealth/router"
 	"context"
+	"flag"
+	"io/ioutil"
 	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"gopkg.in/yaml.v2"
 )
 
-func connectMongoDB() (context.Context, error) {
+func connectMongoDB(config Config) (context.Context, error) {
 	clientOptions := options.Client().
-		ApplyURI("mongodb+srv://aihealth:YWaMxPZh7mGM5k7Q@cluster0.xkwrz.mongodb.net/AIHealth?retryWrites=true&w=majority")
+		ApplyURI(config.Mongo.URI)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	var err error
@@ -24,15 +27,32 @@ func connectMongoDB() (context.Context, error) {
 	return ctx, err
 }
 
+type Config struct {
+	Mongo struct {
+		URI string `yaml:"uri"`
+	}
+}
+
 // @title AIHealth API
 // @version 1.0
 // @description This is a AIHealth server.
 // @host localhost:10086
 // @BasePath /
 func main() {
+	config_file := flag.String("config", "config.yaml", "Path of configure file")
+	flag.Usage()
+	flag.Parse()
+	conf := new(Config)
+
+	yamlFile, err := ioutil.ReadFile(*config_file)
+	err = yaml.Unmarshal(yamlFile, conf)
+	if err != nil {
+		log.Fatalf("Unmarshal: %v when to struct", err)
+	}
+
 	log.Println("AIHealth start...")
 	log.Println("Connecting MongoDB")
-	ctx, err := connectMongoDB()
+	ctx, err := connectMongoDB(*conf)
 	if err != nil {
 		log.Fatal("Connect MongoDB Failed")
 		log.Println(err)

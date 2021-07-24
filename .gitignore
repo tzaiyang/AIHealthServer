@@ -21,5 +21,6 @@ apidoc.json
 # go.sum
 aihealth
 main
+config.yaml
 
 
