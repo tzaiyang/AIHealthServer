@@ -4,6 +4,6 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY ./aihealth ./aihealth
-EXPOSE 8080
+EXPOSE 10086
 
-CMD ["./aihealth"]
+CMD ["/app/aihealth","-config /app/config.yaml"]

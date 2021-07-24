@@ -8,8 +8,8 @@ AIHealth is an app recording your health data, including base information(height
    Trigger by `git push origin master`, Docker image generated will be pushed to dockerhub.
 1. Docker deployment
     ```bash
-    docker pull tzaiyang/aihealth:0.1
-    docker run --rm --name aihealth -d -p 8080:8080 tzaiyang/aihealth:0.1
+    docker pull tzaiyang/aihealth:$tag
+    docker run --rm --name aihealth -d -p 10086:10086 tzaiyang/aihealth:$tag
     ```
 
 2. Requirements
