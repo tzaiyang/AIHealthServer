@@ -5,7 +5,7 @@ AIHealth is an app recording your health data, including base information(height
 
 # CI&CD
 0. [travis CI](./.travis.yml)  
-   Trigger by `git push origin master`, Docker Image generated will pushe to aliyun
+   Trigger by `git push origin master`, Docker image generated will be pushed to dockerhub.
 1. Docker deployment
     ```bash
     docker pull tzaiyang/aihealth:0.1
