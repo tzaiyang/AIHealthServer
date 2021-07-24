@@ -1,10 +1,7 @@
 package model
 
 import (
-	"github.com/go-redis/redis/v8"
-	"github.com/go-redsync/redsync/v4"
-	"gopkg.in/mgo.v2"
-	"gorm.io/gorm"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type DbWorker struct {
@@ -12,7 +9,4 @@ type DbWorker struct {
 	DSN string
 }
 
-var MongoSession *mgo.Session
-var MySQLPool *gorm.DB
-var RedisClient *redis.Client
-var RediSync *redsync.Redsync
+var MongoClient *mongo.Client

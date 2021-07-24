@@ -1,7 +1,13 @@
 // Medical Treatment Record
 package model
 
-import "log"
+import (
+	"context"
+	"log"
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+)
 
 type MedicalTreatmentRecord struct {
 	User_ID                    string `json:"user_id" example:"18717992222" format:"string"`
@@ -19,9 +25,33 @@ type MedicalTreatmentRecord struct {
 	Attending_Physician        string `json:"attending_physician" example:"孔炳华"`
 }
 
-func (mtr MedicalTreatmentRecord) Insert() error {
-	collection := MongoSession.DB("AIHealth").C("mtrs")
-	log.Println("Insert data: ", mtr)
-	err := collection.Insert(mtr)
-	return err
+func (mtr MedicalTreatmentRecord) InsertOne() interface{} {
+	collection := MongoClient.Database("AIHealth").Collection("mtrs")
+	log.Println("Insert mtr: ", mtr)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	res, err := collection.InsertOne(ctx, mtr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return res.InsertedID
+}
+
+func (mtr MedicalTreatmentRecord) Find(filter interface{}) ([]bson.M, error) {
+	collection := MongoClient.Database("AIHealth").Collection("mtrs")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var results []bson.M
+	err = cursor.All(ctx, &results)
+
+	return results, err
 }

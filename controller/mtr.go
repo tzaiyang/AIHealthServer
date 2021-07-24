@@ -7,8 +7,8 @@ import (
 	"aihealth/model"
 
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/swag/example/celler/httputil"
-	"gopkg.in/mgo.v2/bson"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // @Description Add MTR detail information
@@ -23,13 +23,10 @@ func AddMTR(c *gin.Context) {
 	log.Println(c)
 	var data model.MedicalTreatmentRecord
 	if err := c.ShouldBindJSON(&data); err != nil {
-		httputil.NewError(c, http.StatusBadRequest, err)
-		return
+		c.JSON(http.StatusBadRequest, err.Error())
+		log.Fatal(err)
 	}
-	err := data.Insert()
-	if err != nil {
-		c.JSON(400, gin.H{"error": err})
-	}
+	data.InsertOne()
 	c.JSON(200, data)
 }
 
@@ -40,11 +37,12 @@ func AddMTR(c *gin.Context) {
 // @Header 200 {string} mtrs "mtrs name"
 // @Router /mtrs [get]
 func GetMTR(c *gin.Context) {
-	var data []interface{}
-	collection := model.MongoSession.DB("AIHealth").C("mtrs")
-	if err := collection.Find(bson.M{}).All(&data); err == nil {
-		c.JSON(http.StatusOK, data)
+	var data model.MedicalTreatmentRecord
+
+	if results, err := data.Find(bson.D{}); err == nil {
+		c.JSON(http.StatusOK, results)
 	} else {
-		log.Print(err)
+		c.JSON(500, err.Error())
+		log.Print("getMTR error: " + err.Error())
 	}
 }

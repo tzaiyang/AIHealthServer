@@ -5,8 +5,8 @@ import (
 
 	"aihealth/model"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 )
 
 func TestGetAccount(t *testing.T) {

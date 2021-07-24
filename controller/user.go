@@ -6,8 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/swag/example/celler/httputil"
-	"gopkg.in/mgo.v2/bson"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var db = make(map[string]string)
@@ -38,12 +37,13 @@ func GetAccountByName(c *gin.Context) {
 	user_name := c.Params.ByName("name")
 	log.Println(user_name)
 
-	var data []interface{}
-	collection := model.MongoSession.DB("AIHealth").C("users")
-	if err := collection.Find(bson.M{"name": user_name}).All(&data); err == nil {
-		c.JSON(http.StatusOK, data)
+	var user model.User
+
+	if data, err := user.Find(bson.M{"name": user_name}); err == nil {
+		c.JSON(200, data)
 	} else {
 		log.Print(err)
+		c.JSON(500, "server error")
 	}
 }
 
@@ -57,13 +57,13 @@ func GetAccountByName(c *gin.Context) {
 func GetAccountByID(c *gin.Context) {
 	user_name := c.Params.ByName("user_id")
 	log.Println(user_name)
+	var user model.User
 
-	var data []interface{}
-	collection := model.MongoSession.DB("AIHealth").C("users")
-	if err := collection.Find(bson.M{"user_id": user_name}).All(&data); err == nil {
-		c.JSON(http.StatusOK, data)
+	if data, err := user.Find(bson.M{"user_id": user_name}); err == nil {
+		c.JSON(200, data)
 	} else {
 		log.Print(err)
+		c.JSON(500, "server error")
 	}
 }
 
@@ -74,13 +74,12 @@ func GetAccountByID(c *gin.Context) {
 // @Header 200 {string} user "User name"
 // @Router /accounts [get]
 func GetAccount(c *gin.Context) {
-
-	var data []interface{}
-	collection := model.MongoSession.DB("AIHealth").C("users")
-	if err := collection.Find(bson.M{}).All(&data); err == nil {
-		c.JSON(http.StatusOK, data)
+	var user model.User
+	if data, err := user.Find(bson.M{}); err == nil {
+		c.JSON(200, data)
 	} else {
 		log.Print(err)
+		c.JSON(500, "server error")
 	}
 }
 
@@ -96,10 +95,10 @@ func AddAccount(c *gin.Context) {
 	log.Println(c)
 	var data model.User
 	if err := c.ShouldBindJSON(&data); err != nil {
-		httputil.NewError(c, http.StatusBadRequest, err)
-		return
+		c.JSON(http.StatusBadRequest, err.Error())
+		log.Fatal(err)
 	}
-	err := data.Insert()
+	err := data.InsertOne()
 	if err != nil {
 		c.JSON(400, gin.H{"error": err})
 	}
@@ -116,14 +115,9 @@ func DeleteAccountByUserID(c *gin.Context) {
 	user_id := c.Params.ByName("user_id")
 	log.Println(user_id)
 
-	err := model.UserDeleteByID(user_id)
+	count := model.UserDeleteByID(user_id)
 
-	if err == nil {
-		c.JSON(200, gin.H{"status": "deleted succes"})
-	} else {
-		// log.Fatal(err)
-		c.JSON(400, gin.H{"err": err.Error()})
-	}
+	c.JSON(200, gin.H{"status": "deleted succes", "count": count})
 }
 
 // @Description Update user by user_id
@@ -137,13 +131,9 @@ func UpdateAccountByUserID(c *gin.Context) {
 	user_id := c.Param("user_id")
 	var updateAccount model.User
 	if err := c.ShouldBindJSON(&updateAccount); err != nil {
-		httputil.NewError(c, http.StatusBadRequest, err)
-		return
+		c.JSON(http.StatusBadRequest, err.Error())
+		log.Fatal(err)
 	}
-	err := updateAccount.UpdateByID(user_id)
-	if err != nil {
-		// log.Fatal(err)
-		c.JSON(400, gin.H{"err": err.Error()})
-	}
+	updateAccount.UpdateByID(user_id)
 	c.JSON(http.StatusOK, updateAccount)
 }

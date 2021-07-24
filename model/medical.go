@@ -1,7 +1,9 @@
 package model
 
 import (
+	"context"
 	"log"
+	"time"
 )
 
 type Medical struct {
@@ -22,9 +24,30 @@ type Medical struct {
 	Prescription_Only bool    `json:"prescription_only" example:"true"`
 }
 
-func (medical Medical) Insert() error {
-	collection := MongoSession.DB("AIHealth").C("medicals")
-	log.Println("Insert data: ", medical)
-	err := collection.Insert(medical)
-	return err
+func (medical Medical) InsertOne() (interface{}, error) {
+	collection := MongoClient.Database("AIHealth").Collection("medicals")
+	log.Println("Insert medical: ", medical)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	res, err := collection.InsertOne(ctx, medical)
+
+	return res.InsertedID, err
+}
+
+func (medical Medical) Find(filter interface{}) ([]interface{}, error) {
+	collection := MongoClient.Database("AIHealth").Collection("medicals")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var results []interface{}
+	err = cursor.All(context.TODO(), &results)
+
+	return results, err
 }

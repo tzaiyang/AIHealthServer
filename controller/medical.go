@@ -7,8 +7,7 @@ import (
 	"aihealth/model"
 
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/swag/example/celler/httputil"
-	"gopkg.in/mgo.v2/bson"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // @Description Add Medical detail information
@@ -23,12 +22,12 @@ func AddMedical(c *gin.Context) {
 	log.Println(c)
 	var data model.Medical
 	if err := c.ShouldBindJSON(&data); err != nil {
-		httputil.NewError(c, http.StatusBadRequest, err)
-		return
+		c.JSON(http.StatusBadRequest, err.Error())
+		log.Fatal(err)
 	}
-	err := data.Insert()
+	_, err := data.InsertOne()
 	if err != nil {
-		c.JSON(400, gin.H{"error": err})
+		c.JSON(500, err.Error())
 	}
 	c.JSON(200, data)
 }
@@ -40,11 +39,11 @@ func AddMedical(c *gin.Context) {
 // @Header 200 {string} medical "medical name"
 // @Router /medicals [get]
 func GetMedicals(c *gin.Context) {
-	var data []interface{}
-	collection := model.MongoSession.DB("AIHealth").C("medicals")
-	if err := collection.Find(bson.M{}).All(&data); err == nil {
-		c.JSON(http.StatusOK, data)
+	var data model.Medical
+	if results, err := data.Find(bson.M{}); err == nil {
+		c.JSON(http.StatusOK, results)
 	} else {
-		log.Print(err)
+		log.Println("getMedical error: " + err.Error())
+		c.JSON(500, err.Error())
 	}
 }
