@@ -39,8 +39,9 @@ type Config struct {
 // @host localhost:10086
 // @BasePath /
 func main() {
+	// gin.SetMode(gin.ReleaseMode)
 	config_file := flag.String("config", "config.yaml", "Path of configure file")
-	flag.Usage()
+	// flag.Usage()
 	flag.Parse()
 	conf := new(Config)
 

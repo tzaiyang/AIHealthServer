@@ -98,10 +98,7 @@ func AddAccount(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err.Error())
 		log.Fatal(err)
 	}
-	err := data.InsertOne()
-	if err != nil {
-		c.JSON(400, gin.H{"error": err})
-	}
+	data.InsertOne()
 	c.JSON(200, data)
 }
 
