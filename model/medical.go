@@ -38,7 +38,7 @@ func (medical Medical) InsertOne() (interface{}, error) {
 	return res.InsertedID, err
 }
 
-func (medical Medical) Find(filter interface{}) ([]interface{}, error) {
+func (medical Medical) Find(filter interface{}) (interface{}, error) {
 	collection := MongoClient.Database("AIHealth").Collection("medicals")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -49,8 +49,8 @@ func (medical Medical) Find(filter interface{}) ([]interface{}, error) {
 		log.Fatal(err)
 	}
 
-	var results []interface{}
-	err = cursor.All(context.TODO(), &results)
+	var results []bson.M
+	err = cursor.All(ctx, &results)
 
 	return results, err
 }

@@ -23,7 +23,7 @@ type User struct {
 	Updated    string `json:"updated" example:"2021-03-30 15:59"`
 }
 
-func (user User) Find(filter interface{}) ([]interface{}, error) {
+func (user User) Find(filter interface{}) (interface{}, error) {
 	collection := MongoClient.Database("AIHealth").Collection("users")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -34,7 +34,7 @@ func (user User) Find(filter interface{}) ([]interface{}, error) {
 		log.Fatal(err)
 	}
 
-	var results []interface{}
+	var results []bson.M
 	err = cursor.All(context.TODO(), &results)
 
 	return results, err
