@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // @Description Add Medical detail information
@@ -44,6 +45,37 @@ func GetMedicals(c *gin.Context) {
 		c.JSON(http.StatusOK, results)
 	} else {
 		log.Println("getMedical error: " + err.Error())
+		c.JSON(500, err.Error())
+	}
+}
+
+func DelMedicals(c *gin.Context) {
+	medical_id := c.Params.ByName("medical_id")
+	log.Println(medical_id)
+	var data model.Medical
+	if results, err := data.Delete(bson.M{"_id": medical_id}); err == nil {
+		c.JSON(http.StatusOK, gin.H{"deletedCount": results})
+	} else {
+		log.Println("DeleteMedical error: " + err.Error())
+		c.JSON(500, err.Error())
+	}
+}
+
+func UpdateMedicalByID(c *gin.Context) {
+
+	medical_id := c.Params.ByName("medical_id")
+	log.Println(medical_id)
+	objID, _ := primitive.ObjectIDFromHex(medical_id)
+	var updateMedical model.Medical
+	if err := c.ShouldBindJSON(&updateMedical); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		log.Fatal(err)
+	}
+
+	if updateResults, err := updateMedical.UpdateByID(objID); err == nil {
+		c.JSON(http.StatusOK, gin.H{"ModifiedCount": updateResults.ModifiedCount})
+	} else {
+		log.Println("ModifiedMedical error: " + err.Error())
 		c.JSON(500, err.Error())
 	}
 }

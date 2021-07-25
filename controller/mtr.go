@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // @Description Add MTR detail information
@@ -44,5 +45,37 @@ func GetMTR(c *gin.Context) {
 	} else {
 		c.JSON(500, err.Error())
 		log.Print("getMTR error: " + err.Error())
+	}
+}
+
+func DelMtr(c *gin.Context) {
+	mtr_id := c.Params.ByName("mtr_id")
+	log.Println(mtr_id)
+	objID, _ := primitive.ObjectIDFromHex(mtr_id)
+	var data model.MedicalTreatmentRecord
+	if count, err := data.Delete(bson.M{"_id": objID}); err == nil {
+		c.JSON(http.StatusOK, gin.H{"deletedCount": count})
+	} else {
+		log.Println("DeleteMtr error: " + err.Error())
+		c.JSON(500, err.Error())
+	}
+}
+
+func UpdateMtrByID(c *gin.Context) {
+
+	mtr_id := c.Params.ByName("mtr_id")
+	log.Println(mtr_id)
+	objID, _ := primitive.ObjectIDFromHex(mtr_id)
+	var updateMtr model.MedicalTreatmentRecord
+	if err := c.ShouldBindJSON(&updateMtr); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		log.Fatal(err)
+	}
+
+	if updateResults, err := updateMtr.UpdateByID(objID); err == nil {
+		c.JSON(http.StatusOK, gin.H{"ModifiedCount": updateResults.ModifiedCount})
+	} else {
+		log.Println("ModifiedMtr error: " + err.Error())
+		c.JSON(500, err.Error())
 	}
 }

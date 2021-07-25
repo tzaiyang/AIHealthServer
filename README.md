@@ -26,5 +26,8 @@ AIHealth is an app recording your health data, including base information(height
 
 ## FAQ
 1. mongo white ip list:(connection refused)
-sudo mongod --bind_ip_all
+`sudo mongod --bind_ip_all`  
+or edit param in `/etc/mongod.conf` then start mongod with `systemctl start mongod` 
+2. mongod start with error "child process failed, exited with error number 1"  
+   `sudo chmod 777 /var/log/mongodb/`
  

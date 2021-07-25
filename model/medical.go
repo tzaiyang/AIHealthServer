@@ -4,6 +4,9 @@ import (
 	"context"
 	"log"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Medical struct {
@@ -50,4 +53,26 @@ func (medical Medical) Find(filter interface{}) ([]interface{}, error) {
 	err = cursor.All(context.TODO(), &results)
 
 	return results, err
+}
+
+func (medical Medical) Delete(filter interface{}) (int64, error) {
+	collection := MongoClient.Database("AIHealth").Collection("medicals")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	results, err := collection.DeleteOne(ctx, filter)
+
+	return results.DeletedCount, err
+}
+
+func (medical Medical) UpdateByID(id interface{}) (*mongo.UpdateResult, error) {
+	collection := MongoClient.Database("AIHealth").Collection("mtrs")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	updateResults, err := collection.UpdateByID(ctx, id, bson.D{{"$set", medical}})
+
+	return updateResults, err
 }

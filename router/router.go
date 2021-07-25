@@ -13,7 +13,7 @@ func SetupRouter() *gin.Engine {
 	// Get user value
 	r.POST("/accounts", controller.AddAccount)
 	r.DELETE("/accounts/:user_id", controller.DeleteAccountByUserID)
-	r.PATCH("/accounts/:user_id", controller.UpdateAccountByUserID)
+	r.PUT("/accounts/:user_id", controller.UpdateAccountByUserID)
 	r.GET("/accounts", controller.GetAccount)
 	r.GET("/accounts/name/:name", controller.GetAccountByName)
 	r.GET("/accounts/id/:user_id", controller.GetAccountByID)
@@ -41,9 +41,13 @@ func SetupRouter() *gin.Engine {
 
 	r.POST("/medicals", controller.AddMedical)
 	r.GET("/medicals", controller.GetMedicals)
+	r.DELETE("/medicals/id/:medical_id", controller.DelMedicals)
+	r.PUT("mtrs/id/:medical_id", controller.UpdateMedicalByID)
 
 	r.POST("/mtrs", controller.AddMTR)
 	r.GET("/mtrs", controller.GetMTR)
+	r.DELETE("/mtrs/id/:mtr_id", controller.DelMtr)
+	r.PUT("mtrs/id/:mtr_id", controller.UpdateMtrByID)
 
 	return r
 }

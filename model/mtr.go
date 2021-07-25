@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type MedicalTreatmentRecord struct {
@@ -54,4 +55,26 @@ func (mtr MedicalTreatmentRecord) Find(filter interface{}) ([]bson.M, error) {
 	err = cursor.All(ctx, &results)
 
 	return results, err
+}
+
+func (mtr MedicalTreatmentRecord) Delete(filter interface{}) (int64, error) {
+	collection := MongoClient.Database("AIHealth").Collection("mtrs")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	results, err := collection.DeleteOne(ctx, filter)
+
+	return results.DeletedCount, err
+}
+
+func (mtr MedicalTreatmentRecord) UpdateByID(id interface{}) (*mongo.UpdateResult, error) {
+	collection := MongoClient.Database("AIHealth").Collection("mtrs")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	updateResults, err := collection.UpdateByID(ctx, id, bson.D{{"$set", mtr}})
+
+	return updateResults, err
 }
