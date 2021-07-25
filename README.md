@@ -23,5 +23,8 @@ AIHealth is an app recording your health data, including base information(height
 
 4. API Documents
    - Preview [openapi.yaml](./docs/openapi.yaml) with [OpenAPI Online Editor](https://editor.swagger.io/) or `OpenAPI VS Code pludgin`
-## Refernces
-https://gin-gonic.com/docs/examples/bind-query-or-post/
+
+## FAQ
+1. mongo white ip list:(connection refused)
+sudo mongod --bind_ip_all
+ 
