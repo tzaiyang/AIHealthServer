@@ -42,7 +42,7 @@ func SetupRouter() *gin.Engine {
 	r.POST("/medicals", controller.AddMedical)
 	r.GET("/medicals", controller.GetMedicals)
 	r.DELETE("/medicals/id/:medical_id", controller.DelMedicals)
-	r.PUT("mtrs/id/:medical_id", controller.UpdateMedicalByID)
+	r.PUT("medicals/id/:medical_id", controller.UpdateMedicalByID)
 
 	r.POST("/mtrs", controller.AddMTR)
 	r.GET("/mtrs", controller.GetMTR)
