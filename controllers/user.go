@@ -1,13 +1,20 @@
-package controller
+package controllers
 
 import (
-	"aihealth/model"
+	"aihealth/daos"
+	"aihealth/models"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 )
+
+// User manages
+type User struct {
+	data models.User
+	DAO  daos.User
+}
 
 var db = make(map[string]string)
 
@@ -37,9 +44,8 @@ func GetAccountByName(c *gin.Context) {
 	user_name := c.Params.ByName("name")
 	log.Println(user_name)
 
-	var user model.User
-
-	if data, err := user.Find(bson.M{"name": user_name}); err == nil {
+	var user User
+	if data, err := user.DAO.Find(bson.M{"name": user_name}); err == nil {
 		c.JSON(200, data)
 	} else {
 		log.Print(err)
@@ -57,9 +63,9 @@ func GetAccountByName(c *gin.Context) {
 func GetAccountByID(c *gin.Context) {
 	user_name := c.Params.ByName("user_id")
 	log.Println(user_name)
-	var user model.User
+	var user User
 
-	if data, err := user.Find(bson.M{"user_id": user_name}); err == nil {
+	if data, err := user.DAO.Find(bson.M{"user_id": user_name}); err == nil {
 		c.JSON(200, data)
 	} else {
 		log.Print(err)
@@ -74,8 +80,8 @@ func GetAccountByID(c *gin.Context) {
 // @Header 200 {string} user "User name"
 // @Router /accounts [get]
 func GetAccount(c *gin.Context) {
-	var user model.User
-	if data, err := user.Find(bson.M{}); err == nil {
+	var user User
+	if data, err := user.DAO.Find(bson.M{}); err == nil {
 		c.JSON(200, data)
 	} else {
 		log.Print(err)
@@ -86,20 +92,20 @@ func GetAccount(c *gin.Context) {
 // @Description Add user detail information
 // @Accept json
 // @Produce json
-// @Param account body model.User true "Add account"
+// @Param account body models.User true "Add account"
 // @Success 200
 // @Router /accounts [post]
 func AddAccount(c *gin.Context) {
 	// path c.Param
 	// @Accept formData c.PostForm
 	log.Println(c)
-	var data model.User
-	if err := c.ShouldBindJSON(&data); err != nil {
+	var user User
+	if err := c.ShouldBindJSON(&user.data); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		log.Fatal(err)
 	}
-	data.InsertOne()
-	c.JSON(200, data)
+	user.DAO.InsertOne(user.data)
+	c.JSON(200, user.data)
 }
 
 // @Description Delete user by user_id
@@ -111,8 +117,8 @@ func AddAccount(c *gin.Context) {
 func DeleteAccountByUserID(c *gin.Context) {
 	user_id := c.Params.ByName("user_id")
 	log.Println(user_id)
-
-	count := model.UserDeleteByID(user_id)
+	var user User
+	count := user.DAO.UserDeleteByID(user_id)
 
 	c.JSON(200, gin.H{"status": "deleted succes", "count": count})
 }
@@ -121,16 +127,16 @@ func DeleteAccountByUserID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param  user_id path string true "User Id"
-// @Param account body model.User true "Add account"
+// @Param account body models.User true "Add account"
 // @Success 200
 // @Router /accounts/{user_id} [patch]
 func UpdateAccountByUserID(c *gin.Context) {
 	user_id := c.Param("user_id")
-	var updateAccount model.User
-	if err := c.ShouldBindJSON(&updateAccount); err != nil {
+	var user User
+	if err := c.ShouldBindJSON(&user.data); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		log.Fatal(err)
 	}
-	updateAccount.UpdateByID(user_id)
-	c.JSON(http.StatusOK, updateAccount)
+	user.DAO.UpdateByID(user_id, user.data)
+	c.JSON(http.StatusOK, user)
 }

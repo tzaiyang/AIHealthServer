@@ -1,37 +1,14 @@
 package main
 
 import (
-	"aihealth/model"
-	"aihealth/router"
-	"context"
-	"flag"
-	"io/ioutil"
-	"log"
-	"time"
+	"aihealth/common"
+	"aihealth/controllers"
+	"aihealth/databases"
 
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"gopkg.in/yaml.v2"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
-
-func connectMongoDB(config Config) (context.Context, error) {
-	clientOptions := options.Client().
-		ApplyURI(config.Mongo.URI)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	var err error
-	model.MongoClient, err = mongo.Connect(ctx, clientOptions)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return ctx, err
-}
-
-type Config struct {
-	Mongo struct {
-		URI string `yaml:"uri"`
-	}
-}
 
 // @title AIHealth API
 // @version 1.0
@@ -40,32 +17,49 @@ type Config struct {
 // @BasePath /
 func main() {
 	// gin.SetMode(gin.ReleaseMode)
-	config_file := flag.String("config", "config.yaml", "Path of configure file")
-	// flag.Usage()
-	flag.Parse()
-	conf := new(Config)
-
-	yamlFile, err := ioutil.ReadFile(*config_file)
-	err = yaml.Unmarshal(yamlFile, conf)
-	if err != nil {
-		log.Fatalf("Unmarshal: %v when to struct", err)
-	}
-
 	log.Println("AIHealth start...")
 	log.Println("Connecting MongoDB")
-	ctx, err := connectMongoDB(*conf)
+	common.LoadConfig()
+
+	err := databases.Database.Init()
 	if err != nil {
 		log.Fatal("Connect MongoDB Failed")
 		log.Println(err)
 	} else {
 		log.Println("Connected MongoDB Success")
 	}
-	defer func() {
-		if err = model.MongoClient.Disconnect(ctx); err != nil {
-			panic(err)
-		}
-	}()
 
-	r := router.SetupRouter()
+	defer databases.Database.Close()
+	r := SetupRouter()
 	r.Run(":10086")
+}
+
+func SetupRouter() *gin.Engine {
+	r := gin.Default()
+	r.Use(cors.Default())
+	// Get user value
+	r.POST("/accounts", controllers.AddAccount)
+	r.DELETE("/accounts/:user_id", controllers.DeleteAccountByUserID)
+	r.PUT("/accounts/:user_id", controllers.UpdateAccountByUserID)
+	r.GET("/accounts", controllers.GetAccount)
+	r.GET("/accounts/name/:name", controllers.GetAccountByName)
+	r.GET("/accounts/id/:user_id", controllers.GetAccountByID)
+
+	authorized := r.Group("/admin", gin.BasicAuth(gin.Accounts{
+		"foo":  "bar", // user:foo password:bar
+		"manu": "123", // user:manu password:123
+	}))
+	authorized.POST("", controllers.AuthorizeAccount)
+
+	r.POST("/medicals", controllers.AddMedical)
+	r.GET("/medicals", controllers.GetMedicals)
+	r.DELETE("/medicals/id/:medical_id", controllers.DelMedicals)
+	r.PUT("medicals/id/:medical_id", controllers.UpdateMedicalByID)
+
+	r.POST("/mtrs", controllers.AddMTR)
+	r.GET("/mtrs", controllers.GetMTR)
+	r.DELETE("/mtrs/id/:mtr_id", controllers.DelMtr)
+	r.PUT("mtrs/id/:mtr_id", controllers.UpdateMtrByID)
+
+	return r
 }

@@ -1,6 +1,9 @@
-package model
+package daos
 
 import (
+	"aihealth/common"
+	"aihealth/databases"
+	"aihealth/models"
 	"context"
 	"log"
 	"time"
@@ -9,22 +12,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// User manages User CRUD
 type User struct {
-	User_ID    string `json:"user_id" example:"18717992222" format:"string"`
-	Phone      string `json:"phone" example:"18717992222"`
-	Name       string `json:"name" example:"Ryan"`
-	Birth      string `json:"birth" example:"2009-08-23"`
-	Sex        string `json:"sex" example:"男"`
-	ABO        string `json:"abo" example:"B"`
-	Rh         bool   `json:"rh" example:"true"`
-	Height     int    `json:"height" example:"170"`
-	Weight     int    `json:"weight" example:"65"`
-	Occupation string `json:"occupation" example:"程序员"`
-	Updated    string `json:"updated" example:"2021-03-30 15:59"`
 }
 
-func (user User) Find(filter interface{}) (interface{}, error) {
-	collection := MongoClient.Database("AIHealth").Collection("users")
+func (u *User) Find(filter interface{}) (interface{}, error) {
+	collection := databases.Database.MgDbClient.Database(common.Config.Mongo.DbName).Collection(common.ColUsers)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -40,8 +33,8 @@ func (user User) Find(filter interface{}) (interface{}, error) {
 	return results, err
 }
 
-func (user User) InsertOne() interface{} {
-	collection := MongoClient.Database("AIHealth").Collection("users")
+func (u *User) InsertOne(user models.User) interface{} {
+	collection := databases.Database.MgDbClient.Database(common.Config.Mongo.DbName).Collection(common.ColUsers)
 	log.Println("Insert data: ", user)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -54,8 +47,8 @@ func (user User) InsertOne() interface{} {
 	return res.InsertedID
 }
 
-func (user User) UpdateByID(user_id string) {
-	collection := MongoClient.Database("AIHealth").Collection("users")
+func (u *User) UpdateByID(user_id string, user models.User) {
+	collection := databases.Database.MgDbClient.Database(common.Config.Mongo.DbName).Collection(common.ColUsers)
 	log.Println("Update data: ", user)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -78,8 +71,8 @@ func (user User) UpdateByID(user_id string) {
 	}
 }
 
-func UserDeleteByID(user_id string) int64 {
-	collection := MongoClient.Database("AIHealth").Collection("users")
+func (u *User) UserDeleteByID(user_id string) int64 {
+	collection := databases.Database.MgDbClient.Database(common.Config.Mongo.DbName).Collection(common.ColUsers)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

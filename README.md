@@ -30,4 +30,12 @@ AIHealth is an app recording your health data, including base information(height
 or edit param in `/etc/mongod.conf` then start mongod with `systemctl start mongod` 
 2. mongod start with error "child process failed, exited with error number 1"  
    `sudo chmod 777 /var/log/mongodb/`
+
+3. mongo data export
+   ```bash
+   # export from mongodb
+   $ mongoexport -d AIHealth -c medicals -o AIHealth_medicals.dat
+   # import to remote host.
+   $ mongoimport -h aiwac.net:27017 -d AIHealth -c medicals AIHealth_medicals.dat
+   ```
  
