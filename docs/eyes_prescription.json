@@ -1,0 +1,59 @@
+[
+  {
+  "user_id": "18707122919",
+  "mtr_id":"mtr0002",
+  "prescription_id":"pres0001",
+  "name":"",
+  "detail":"",
+  "prescription_medicals":[
+    {
+      "name":"聚乙烯醇滴眼液",
+      "single_dose":"0.2ml",
+      "frequency":"每日4次",
+      "天数":14,
+      "usage":"点双眼"
+    },
+    {
+      "name":"明目地黄胶囊",
+      "single_dose":"3",
+      "frequency":"每日3次",
+      "天数":14,
+      "usage":"口服"
+    },
+    {
+      "name":"脉血康胶囊",
+      "single_dose":"3",
+      "frequency":"每日3次",
+      "天数":14,
+      "usage":"口服"
+    }
+  ]
+  },
+  {
+    "user_id": "18707122919",
+    "mtr_id":"mtr0001",
+    "prescription_id":"pres0002",
+    "name": "Prescription for spectacles",
+    "prescription":{
+      "Distance":{
+        "OD": {
+          "Sph":-2.75,
+          "CVA":1.0
+        },
+        "OS": {
+          "Sph":-2.25,
+          "CVA":1.0
+        }
+      },
+      "Near":{
+  
+      },
+      "PD": 60,
+      "RPD":null,
+      "LPD":null,
+      "PH":null,
+      "RPH":null,
+      "LPH":null
+    }
+  }
+  ]
