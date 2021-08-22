@@ -24,9 +24,9 @@ before_install:
 script: 
   # - go test -v ./controller
   # - GOOS=linux GOARCH=amd64 go build -o aihealth main.go
-  - go build -o aihealth main.go
+  - cd cmd/server && go build -o aihealth main.go
   # - docker build -t registry.cn-hangzhou.aliyuncs.com/mango9102/aihealth:0.1 ./
-  - docker build -t tzaiyang/aihealth:0.2.0 ./
+  - docker build -t tzaiyang/aihealth:0.2.0 ./ -f ../../build/Dockerfile
 
 after_success:
   # - echo ${DOCKER_PASSWORD} |docker login -u ${DOCKER_USER} --password-stdin registry.cn-hangzhou.aliyuncs.com 

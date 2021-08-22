@@ -1,4 +1,4 @@
-package models
+package handler
 
 type Prescription struct {
 	User_ID               string `json:"user_id"`

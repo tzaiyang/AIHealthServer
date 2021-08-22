@@ -1,9 +1,9 @@
 /*
  * @File: databases.databases.go
  * @Description: Creates global database instance
- * @Author: Nguyen Truong Duong (seedotech@gmail.com)
+ * @Author: ryan (zaiyangt@163.com)
  */
-package databases
+package db
 
 // Database shares global database instance
 var (

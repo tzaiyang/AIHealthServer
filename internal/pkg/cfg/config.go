@@ -1,13 +1,17 @@
-package common
+package cfg
 
 import (
 	"io/ioutil"
 	"log"
+	"os"
 
 	"gopkg.in/yaml.v2"
 )
 
 type Configuration struct {
+	Service struct {
+		Port string `yaml:"port"`
+	}
 	Mongo struct {
 		URI    string `yaml:"uri"`
 		DbName string `yaml:"dbname"`
@@ -19,17 +23,10 @@ var (
 	Config *Configuration
 )
 
-// COLLECTIONs of the database table
-const (
-	ColMtrs    = "mtrs"
-	ColMedical = "medicals"
-	ColUsers   = "users"
-)
-
 func LoadConfig() error {
 	Config = new(Configuration)
 
-	yamlFile, err := ioutil.ReadFile("config/config.yaml")
+	yamlFile, err := ioutil.ReadFile(os.Getenv("CONFIG_URL"))
 	if err != nil {
 		log.Println(err)
 	}

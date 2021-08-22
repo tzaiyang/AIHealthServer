@@ -3,6 +3,9 @@
 
 AIHealth is an app recording your health data, including base information(height,weight,ABO,etc.), sports data, medical record, etc. The app will analyse these data to help you improve your body health.
 
+# Local Test
+export CONFIG_URL="config/config.yaml" && go run cmd/server/main.go
+
 # CI&CD
 0. [travis CI](./.travis.yml)  
    Trigger by `git push origin master`, Docker image generated will be pushed to dockerhub.

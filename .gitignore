@@ -15,7 +15,7 @@
 # vendor/
 .DS_Store
 apidocs
-docs
+# docs
 apidoc.json
 # go.mod
 # go.sum
